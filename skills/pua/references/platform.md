@@ -5,13 +5,13 @@
 ## API 基础信息
 
 - 端点：`https://pua-api.agentguard.workers.dev`
-- 本地配置：`~/.puav2/config.json`
-- 本地缓存：`~/.puav2/cache/`
-- 本地统计：`~/.puav2/stats.json`
+- 本地配置：`~/.pua/config.json`
+- 本地缓存：`~/.pua/cache/`
+- 本地统计：`~/.pua/stats.json`
 
 ## 一、首次注册流程
 
-在会话启动时检查 `~/.puav2/config.json`。如果文件不存在，执行以下注册流程：
+在会话启动时检查 `~/.pua/config.json`。如果文件不存在，执行以下注册流程：
 
 ### 步骤 1：欢迎 & 手机号输入
 
@@ -51,7 +51,7 @@ curl -s -X POST https://pua-api.agentguard.workers.dev/v1/register \
 
 ### 步骤 4：存储配置
 
-将返回的信息写入 `~/.puav2/config.json`：
+将返回的信息写入 `~/.pua/config.json`：
 
 ```json
 {
@@ -83,7 +83,7 @@ curl -s -X POST https://pua-api.agentguard.workers.dev/v1/register \
 
 ## 二、会话启动 — 配置刷新
 
-如果 `~/.puav2/config.json` 已存在：
+如果 `~/.pua/config.json` 已存在：
 
 1. 读取 token
 2. 尝试刷新远端配置（超时 3 秒）：
@@ -102,7 +102,7 @@ curl -s --max-time 3 -X GET https://pua-api.agentguard.workers.dev/v1/commands \
   -H "Authorization: Bearer <token>"
 ```
 
-缓存到 `~/.puav2/cache/commands.json`
+缓存到 `~/.pua/cache/commands.json`
 
 ## 三、指令系统
 
@@ -110,20 +110,20 @@ curl -s --max-time 3 -X GET https://pua-api.agentguard.workers.dev/v1/commands \
 
 | 触发词 | 指令 | 类型 |
 |--------|------|------|
-| `/pua kpi` | KPI 报告卡 | 🆓 免费 |
-| `/pua 段位` | 段位查询 | 🆓 免费 |
-| `/pua 味道` | 味道切换 | 🆓 免费 |
-| `/pua` | 查看所有指令 | 🆓 免费 |
-| `/pua 升级` | 显示升级方案 | 🆓 免费 |
-| `/pua 周报` | 大厂周报生成器 | 💎 Pro |
-| `/pua 述职` | 模拟述职答辩 | 💎 Pro |
-| `/pua 代码美化` | PR 包装大师 | 💎 Pro |
-| `/pua 反PUA` | 反 PUA 识别器 | 💎 Pro |
+| `/pua:kpi` | KPI 报告卡 | 🆓 免费 |
+| `/pua:pro` + "段位" | 段位查询 | 🆓 免费 |
+| `/pua:flavor` | 味道切换 | 🆓 免费 |
+| `/pua:pua` | 查看所有指令 | 🆓 免费 |
+| `/pua:pro` + "升级" | 显示升级方案 | 🆓 免费 |
+| `/pua:pro` + "周报" | 大厂周报生成器 | 💎 Pro |
+| `/pua:pro` + "述职" | 模拟述职答辩 | 💎 Pro |
+| `/pua:pro` + "代码美化" | PR 包装大师 | 💎 Pro |
+| `/pua:pro` + "反PUA" | 反 PUA 识别器 | 💎 Pro |
 
 ### 指令执行流程
 
-1. 用户输入触发词（如 `/pua kpi`）
-2. 检查本地缓存 `~/.puav2/cache/commands.json` 中的指令列表
+1. 用户输入触发词（如 `/pua:kpi`）
+2. 检查本地缓存 `~/.pua/cache/commands.json` 中的指令列表
 3. 如果是免费指令 → 从远端获取 prompt 模板执行（回退用内置模板）
 4. 如果是 Pro 指令：
    - 检查 plan 是否为 pro/lifetime
@@ -208,7 +208,7 @@ curl -s --max-time 3 -X GET https://pua-api.agentguard.workers.dev/v1/stats \
 └─────────────────────────────────────────────────┘
 ```
 
-选择后更新 `~/.puav2/config.json` 中的 `flavor` 字段。
+选择后更新 `~/.pua/config.json` 中的 `flavor` 字段。
 
 ## 四、升级支付流程
 
@@ -322,7 +322,7 @@ curl -s --max-time 2 -X POST https://pua-api.agentguard.workers.dev/v1/stats \
   -d '{"event_type":"xxx","event_data":{}}' > /dev/null 2>&1
 ```
 
-同时更新本地 `~/.puav2/stats.json` 作为离线备份。
+同时更新本地 `~/.pua/stats.json` 作为离线备份。
 
 ## 六、节日彩蛋
 

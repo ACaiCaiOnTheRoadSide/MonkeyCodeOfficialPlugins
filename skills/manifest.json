@@ -32,6 +32,21 @@
       "is_enabled": true
     },
     {
+      "skill_id": "executing-plans",
+      "name": {
+        "en": "Executing Implementation Plans",
+        "zh": "执行实施计划"
+      },
+      "description": {
+        "en": "Load and execute implementation plans in a separate session with step-by-step verification and review checkpoints. Use when you have a written plan and need to execute it methodically.",
+        "zh": "在独立会话中加载并执行实施计划，包含逐步验证和审查节点。当已有书面的实施计划并需要有条理地执行时使用。"
+      },
+      "categories": ["workflow", "implementation", "execution"],
+      "tags": ["实施", "执行", "计划"],
+      "skill_md_path": "executing-plans/SKILL.md",
+      "is_enabled": true
+    },
+    {
       "skill_id": "golang-code-review",
       "name": {
         "en": "Golang Code Review",
@@ -149,6 +164,36 @@
       "categories": ["development", "skills", "authoring"],
       "tags": ["开发", "技能"],
       "skill_md_path": "skill-creator/SKILL.md",
+      "is_enabled": true
+    },
+    {
+      "skill_id": "subagent-driven-development",
+      "name": {
+        "en": "Subagent-Driven Development",
+        "zh": "子代理驱动开发"
+      },
+      "description": {
+        "en": "Execute implementation plans by dispatching fresh subagents per task with two-stage review (spec compliance then code quality) for fast, high-quality iteration.",
+        "zh": "通过为每个任务分派全新的子代理并执行两阶段审查（规格合规审查后代码质量审查）来执行实施计划，实现快速高质量迭代。"
+      },
+      "categories": ["workflow", "implementation", "quality"],
+      "tags": ["开发", "实施", "审查"],
+      "skill_md_path": "subagent-driven-development/SKILL.md",
+      "is_enabled": true
+    },
+    {
+      "skill_id": "systematic-debugging",
+      "name": {
+        "en": "Systematic Debugging",
+        "zh": "系统化调试"
+      },
+      "description": {
+        "en": "Root cause analysis methodology requiring investigation before any fixes. Use for any bug, test failure, or unexpected behavior - no fixes without understanding the underlying cause first.",
+        "zh": "要求在修复之前先进行根因调查的方法论。适用于任何错误、测试失败或异常行为 - 必须先理解根本原因再修复。"
+      },
+      "categories": ["debugging", "workflow", "quality"],
+      "tags": ["调试", "排错", "质量"],
+      "skill_md_path": "systematic-debugging/SKILL.md",
       "is_enabled": true
     },
     {
@@ -329,6 +374,21 @@
       "categories": ["web", "frontend", "planning", "implementation"],
       "tags": ["官网", "开发"],
       "skill_md_path": "corporate-website-dev/SKILL.md",
+      "is_enabled": true
+    },
+    {
+      "skill_id": "writing-plans",
+      "name": {
+        "en": "Writing Implementation Plans",
+        "zh": "编写实施计划"
+      },
+      "description": {
+        "en": "Transform design documents and requirements into comprehensive, bite-sized implementation plans with file-level granularity, testing strategy, and checkpoints. Assumes zero context for the implementing engineer.",
+        "zh": "将设计文档和需求转化为全面、细粒度的实施计划，包含文件级细节、测试策略和检查点。假设实施工程师对项目背景零了解。"
+      },
+      "categories": ["planning", "architecture", "workflow"],
+      "tags": ["架构", "计划", "开发"],
+      "skill_md_path": "writing-plans/SKILL.md",
       "is_enabled": true
     },
     {
