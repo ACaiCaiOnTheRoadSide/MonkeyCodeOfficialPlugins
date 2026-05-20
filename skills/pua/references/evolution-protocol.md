@@ -10,7 +10,7 @@ PUA v2 默认是无状态的——每次会话冷启动，不记得上次做了�
 
 ## 运行时状态文件
 
-`~/.puav2/evolution.md` 是自进化的持久化存储。不存在时自动创建。
+`~/.pua/evolution.md` 是自进化的持久化存储。不存在时自动创建。
 
 ### 文件结构
 
@@ -40,7 +40,7 @@ PUA v2 默认是无状态的——每次会话冷启动，不记得上次做了�
 
 ### 阶段一：会话启动 — 加载基线
 
-检查 `~/.puav2/evolution.md` 是否存在：
+检查 `~/.pua/evolution.md` 是否存在：
 
 ```
 evolution.md 存在？
@@ -143,7 +143,7 @@ evolution.md 存在？
 
 ## 基线初始化模板
 
-首次创建 `~/.puav2/evolution.md` 时使用：
+首次创建 `~/.pua/evolution.md` 时使用：
 
 ```markdown
 # PUA 自进化基线
@@ -175,7 +175,7 @@ evolution.md 存在？
 | **[PUA生效 🔥] 标记** | 标记时内部分类计数 |
 | **任务完成旁白** | 结尾旁白中包含基线比对结果 |
 | **压力升级 L1-L4** | 如果低于基线，起始压力等级 +1 |
-| **/pua kpi** | KPI 报告卡纳入进化统计 |
+| **/pua:kpi** | KPI 报告卡纳入进化统计 |
 | **P9 验收** | P9 可以看到 P8 的进化轨迹 |
 | **auto memory** | evolution.md 的"项目级记忆"与 auto memory 互补（evolution 记行为模式，memory 记项目事实） |
 
