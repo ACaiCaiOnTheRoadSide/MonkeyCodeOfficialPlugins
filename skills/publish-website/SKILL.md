@@ -310,11 +310,12 @@ Hard authoring constraints:
 - Automatically select the process orchestration strategy according to 3b.0 Section A: single-process approach `CMD ["application command", ...]`; multi-process approach `CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf","-n"]` (see 3b.1.a for configuration)
 - `CMD` must use exec form (JSON array)
 - Must `EXPOSE <service_port>`, matching the multipart field `service_port`; auxiliary component ports (DB / Redis / MinIO, and others) use only 127.0.0.1 and **must not be EXPOSEd**
-- **Every Docker Hub image referenced by `FROM` must have the `registry.monkeycode-ai.online/` proxy prefix**:
-  - Official images without a namespace (`alpine` / `node` / `python` / `golang` / `nginx` / `rust` / `caddy`, and others) must insert `library/`: `FROM registry.monkeycode-ai.online/library/alpine:3.20`
-  - Images that already have a namespace (such as `eclipse-temurin/...`) **must not** insert another `library/`: `FROM registry.monkeycode-ai.online/eclipse-temurin:21-alpine-jdk`
+- **Every Docker Hub image referenced by `FROM` must have the `docker.1ms.run/` proxy prefix**:
+  - Official images without a namespace (`alpine` / `node` / `python` / `golang` / `nginx` / `rust` / `caddy`, and others) must insert `library/`: `FROM docker.1ms.run/library/alpine:3.20`
+  - Images that already have a namespace (such as `eclipse-temurin/...`) **must not** insert another `library/`: `FROM docker.1ms.run/eclipse-temurin:21-alpine-jdk`
   - `FROM scratch` **does not use** the proxy; leave it unchanged
   - Inject this prefix only when generating the Dockerfile; after the showcase server loads the image, it references the local image ID and is no longer affected by the proxy
+  - **默认镜像代理为 `docker.1ms.run/`**；仅当用户明确指示时，才可将其整体替换为用户指定的其他镜像代理（例如用户说"使用我自己的镜像代理 xxx"时，将前缀替换为 `xxx/`）。未经用户明确指示，**不得**擅自更换默认代理
 
 #### 3b.1.a supervisord Configuration (Multi-process Approach Only)
 
@@ -995,10 +996,11 @@ The application is currently still in the <status> state and will only go offlin
 - **Any build / run / healthcheck failure must abort and print the end of stderr; do not continue uploading**
 - The image tar.gz must be <= <MAX_PACKAGE_SIZE> (500 MB domestic / **100 MB international**, per Step 1c)
 - Cleanup must run `"$RUNTIME" rmi <tag>` and `rm -f /tmp/Dockerfile /tmp/supervisord.conf /tmp/start.sh /tmp/showcase-image.tar.gz` (on both success and failure; supervisord.conf / start.sh do not exist under the single-process approach, so `-f` silently skips them)
-- **Every Docker Hub image referenced by `FROM` must have the `registry.monkeycode-ai.online/` proxy prefix**:
-  - Official images without a namespace must insert `library/` (such as `registry.monkeycode-ai.online/library/alpine:3.20` and `registry.monkeycode-ai.online/library/node:20-alpine`)
-  - Images that already have a namespace **must not** insert another `library/` (such as `registry.monkeycode-ai.online/eclipse-temurin:21-alpine-jdk`)
+- **Every Docker Hub image referenced by `FROM` must have the `docker.1ms.run/` proxy prefix**:
+  - Official images without a namespace must insert `library/` (such as `docker.1ms.run/library/alpine:3.20` and `docker.1ms.run/library/node:20-alpine`)
+  - Images that already have a namespace **must not** insert another `library/` (such as `docker.1ms.run/eclipse-temurin:21-alpine-jdk`)
   - `FROM scratch` **does not use** the proxy
+  - The default proxy is `docker.1ms.run/`; it may be replaced with a user-specified proxy only when the user explicitly instructs it (for example, replacing the prefix with the user's own image proxy)
 - **Dependency downloads in the builder stage must use Chinese mirrors** (see "Dependency Download Mirror Convention" in 3b.1): Go -> goproxy.cn, npm/pnpm/yarn -> npmmirror.com, pip -> Tsinghua PyPI, cargo -> Tsinghua crates.io, Maven/Gradle -> Alibaba Cloud, apk/apt/yum -> Tsinghua TUNA. The mirror-switch statement must precede the first dependency download command
 
 ---
