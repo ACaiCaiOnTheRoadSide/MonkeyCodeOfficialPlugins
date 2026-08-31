@@ -62,7 +62,23 @@ class DesignFlowSkillTests(unittest.TestCase):
             for path in SKILLS.glob("*/SKILL.md")
             if (match := re.search(r"(?m)^name:\s*(.+)$", path.read_text(encoding="utf-8")))
         }
-        self.assertEqual(policies, {"product": {"product": True}})
+        self.assertEqual(
+            policies,
+            {
+                "design-artifacts": {
+                    "allow_write_paths": [".ohmyagent/design/**"],
+                    "block_tools": ["apply_patch"],
+                    "allow_tools": ["DesignSavePreview"],
+                },
+                "design-images": {
+                    "allow_write_paths": [".ohmyagent/design/**"],
+                    "block_tools": ["apply_patch"],
+                    "allow_tools": ["DesignSavePreview"],
+                    "allow_tool_prefixes": ["mcp__"],
+                },
+                "product": {"product": True},
+            },
+        )
         for route in routes.values():
             ids = {step["id"] for step in route["steps"]}
             for step in route["steps"]:
@@ -95,10 +111,23 @@ class DesignFlowSkillTests(unittest.TestCase):
         }
         for route_id, entry_step in entry_steps.items():
             steps = {step["id"]: step for step in routes[route_id]["steps"]}
-            self.assertEqual(
-                steps[entry_step]["transitions"]["manual"],
-                {"completed": "image-capability", "template-free": "direct-thesis"},
-            )
+            if route_id.startswith("existing-"):
+                self.assertEqual(
+                    steps[entry_step]["transitions"]["manual"],
+                    {
+                        "refine": "visual-foundations",
+                        "restyle": "direct-thesis",
+                        "redesign": "image-capability",
+                        "template-free": "direct-thesis",
+                    },
+                )
+                for required in ("outcome refine", "outcome restyle", "outcome redesign", "Do not escalate refine or restyle"):
+                    self.assertIn(required, steps[entry_step]["instructions"])
+            else:
+                self.assertEqual(
+                    steps[entry_step]["transitions"]["manual"],
+                    {"completed": "image-capability", "template-free": "direct-thesis"},
+                )
             allocation = steps[entry_step]["instructions"]
             for required in (
                 "only direct child directories",
@@ -131,7 +160,7 @@ class DesignFlowSkillTests(unittest.TestCase):
             self.assertEqual(
                 {item["equals"]: item["target"] for item in art_cards},
                 {
-                    "select": "visual-foundations",
+                    "select": "direction-selection",
                     "next": "art-direction",
                     "skip": "template-cards",
                     "cancel": "cancelled",
@@ -144,9 +173,9 @@ class DesignFlowSkillTests(unittest.TestCase):
             self.assertEqual(
                 art_question["transitions"]["manual"],
                 {
-                    "direction-1": "visual-foundations",
-                    "direction-2": "visual-foundations",
-                    "direction-3": "visual-foundations",
+                    "direction-1": "direction-selection",
+                    "direction-2": "direction-selection",
+                    "direction-3": "direction-selection",
                     "actions": "art-direction-actions",
                     "next": "art-direction-question",
                     "template": "template-question",
@@ -156,9 +185,9 @@ class DesignFlowSkillTests(unittest.TestCase):
             self.assertEqual(
                 {item["equals"]: item["target"] for item in art_question["transitions"]["tools"]},
                 {
-                    "Direction 1": "visual-foundations",
-                    "Direction 2": "visual-foundations",
-                    "Direction 3": "visual-foundations",
+                    "Direction 1": "direction-selection",
+                    "Direction 2": "direction-selection",
+                    "Direction 3": "direction-selection",
                     "More actions": "art-direction-actions",
                 },
             )
@@ -178,9 +207,14 @@ class DesignFlowSkillTests(unittest.TestCase):
             art_default = steps["art-direction-default"]
             self.assertEqual(
                 art_default["transitions"]["manual"],
-                {"selected": "visual-foundations", "template": "template-default"},
+                {"selected": "direction-selection", "template": "template-default"},
             )
             self.assertIn("SELECTED-DIRECTION.md", art_default["instructions"])
+            selection = steps["direction-selection"]
+            self.assertEqual(selection["transitions"]["manual"], {"completed": "visual-foundations"})
+            self.assertEqual(selection["write_policy"], "design-artifacts")
+            for required in ("selection mode", "stable identity", "RUN_DIRECTORY/SELECTED-DIRECTION.md", "Read the file back"):
+                self.assertIn(required, selection["instructions"])
 
             template = steps["template-cards"]
             self.assertEqual(template["unavailable_target"], "template-question")
@@ -262,11 +296,11 @@ class DesignFlowSkillTests(unittest.TestCase):
             jury = steps["design-jury"]
             quality_gate = steps["prototype-quality-gate"]
             self.assertEqual(steps["platform"]["transitions"]["manual"], {"completed": "html-prototype"})
-            self.assertEqual(prototype["transitions"]["manual"], {"completed": "design-jury"})
+            self.assertEqual(prototype["transitions"]["manual"], {"completed": "prototype-quality-gate"})
             self.assertEqual(jury["skills"], ["headless-design-jury"])
             self.assertEqual(
                 jury["transitions"]["manual"],
-                {"passed": "prototype-quality-gate", "failed": "cancelled"},
+                {"passed": "completed", "failed": "cancelled"},
             )
             for required in (
                 "exactly five independent read-only Agent reviews",
@@ -278,7 +312,7 @@ class DesignFlowSkillTests(unittest.TestCase):
                 self.assertIn(required, jury["instructions"])
             self.assertEqual(
                 quality_gate["transitions"]["manual"],
-                {"passed": "completed", "revise": "html-prototype", "failed": "cancelled"},
+                {"passed": "design-jury", "revise": "html-prototype", "failed": "cancelled"},
             )
             self.assertEqual(quality_gate["skills"], ["design-refinement"])
             self.assertIn("RUN_DIRECTORY/prototype.html", prototype["instructions"])
@@ -293,7 +327,10 @@ class DesignFlowSkillTests(unittest.TestCase):
                 "after three failed audits",
             ):
                 self.assertIn(required, quality_gate["instructions"])
-            self.assertIn("ask to develop the product", quality_gate["instructions"])
+            self.assertIn("continue to design-jury", quality_gate["instructions"])
+            self.assertIn("ask to develop the product", jury["instructions"])
+            for step in steps.values():
+                self.assertIn(step["write_policy"], {"design-artifacts", "design-images"})
             self.assertTrue(
                 {"html-approval", "implementation", "screenshot-comparison", "refinement-checkpoint",
                  "build-verification", "accessibility-verification", "responsive-verification",
