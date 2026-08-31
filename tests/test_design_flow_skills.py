@@ -79,8 +79,9 @@ class DesignFlowSkillTests(unittest.TestCase):
                 if transitions.get("tools") and not transitions.get("manual"):
                     self.assertIn("unavailable_target", step)
         root_skill = skill_text("design-flow")
-        self.assertIn("explicit user instruction not to use, recommend, browse, or show templates is binding", root_skill)
+        self.assertIn("Recommendation stages are eligible only", root_skill)
         self.assertIn("take the `template-free` transition directly to `direct-thesis`", root_skill)
+        self.assertIn("must use outcome `enhancement`", root_skill)
         web_steps = {step["id"]: step for step in routes["new-web"]["steps"]}
         self.assertNotIn("visual-source", web_steps)
         self.assertEqual(web_steps["platform"]["skills"], ["frontend-design", "web-component-design"])
@@ -88,17 +89,20 @@ class DesignFlowSkillTests(unittest.TestCase):
         self.assertNotIn("build-verification", web_steps)
 
         entry_steps = {
-            "new-web": "brief",
-            "new-mobile": "brief",
-            "existing-web": "existing-assessment",
-            "existing-mobile": "existing-assessment",
+            "new-web": ("brief", {"completed": "image-capability", "template-free": "direct-thesis"}),
+            "new-mobile": ("brief", {"completed": "image-capability", "template-free": "direct-thesis"}),
+            "existing-web": (
+                "existing-assessment",
+                {"redesign": "image-capability", "enhancement": "enhancement-constraints", "template-free": "direct-thesis"},
+            ),
+            "existing-mobile": (
+                "existing-assessment",
+                {"redesign": "image-capability", "enhancement": "enhancement-constraints", "template-free": "direct-thesis"},
+            ),
         }
-        for route_id, entry_step in entry_steps.items():
+        for route_id, (entry_step, expected_transitions) in entry_steps.items():
             steps = {step["id"]: step for step in routes[route_id]["steps"]}
-            self.assertEqual(
-                steps[entry_step]["transitions"]["manual"],
-                {"completed": "image-capability", "template-free": "direct-thesis"},
-            )
+            self.assertEqual(steps[entry_step]["transitions"]["manual"], expected_transitions)
             allocation = steps[entry_step]["instructions"]
             for required in (
                 "only direct child directories",
@@ -107,13 +111,45 @@ class DesignFlowSkillTests(unittest.TestCase):
                 "create-new operation that fails",
                 "Never overwrite, reuse",
                 "RUN_DIRECTORY",
-                "explicit user instruction not to use, recommend, browse, or show templates",
-                "do not inspect image-generation capability",
-                "do not invoke template catalogs, template artifacts, or selection-card tools",
-                "outcome template-free",
-                "direct-thesis",
             ):
                 self.assertIn(required, allocation)
+            if route_id.startswith("new-"):
+                for required in (
+                    "explicit user instruction not to use, recommend, browse, or show templates",
+                    "do not inspect image-generation capability",
+                    "do not invoke template catalogs, template artifacts, or selection-card tools",
+                    "outcome template-free",
+                    "direct-thesis",
+                ):
+                    self.assertIn(required, allocation)
+            else:
+                for required in (
+                    "Classify from explicit user intent",
+                    "outcome redesign only when the user explicitly asks to redesign",
+                    "outcome enhancement for feature additions",
+                    "Never infer redesign",
+                    "must skip image-capability, art-direction, template, selection-card, design-thesis, and standalone-prototype steps",
+                ):
+                    self.assertIn(required, allocation)
+                self.assertEqual(steps["enhancement-constraints"]["transitions"]["manual"], {"completed": "enhancement-platform"})
+                self.assertEqual(steps["enhancement-platform"]["transitions"]["manual"], {"completed": "enhancement-build-verification"})
+                self.assertEqual(steps["enhancement-build-verification"]["transitions"]["manual"], {"completed": "enhancement-quality-gate"})
+                self.assertEqual(
+                    steps["enhancement-quality-gate"]["transitions"]["manual"],
+                    {"passed": "enhancement-accessibility-verification", "revise": "enhancement-platform", "failed": "cancelled"},
+                )
+                self.assertEqual(steps["enhancement-states-verification"]["transitions"]["manual"], {"completed": "completed"})
+                recommendation_steps = " ".join(steps[name]["instructions"] for name in (
+                    "enhancement-constraints",
+                    "enhancement-platform",
+                    "enhancement-build-verification",
+                    "enhancement-quality-gate",
+                    "enhancement-accessibility-verification",
+                    "enhancement-responsive-verification",
+                    "enhancement-states-verification",
+                ))
+                self.assertNotIn("Call DesignTemplateCatalog", recommendation_steps)
+                self.assertNotIn("Call DesignSelectCards", recommendation_steps)
             for step_id, step in steps.items():
                 if step_id != entry_step:
                     self.assertIn("Reuse exactly the RUN_DIRECTORY", step["instructions"])
@@ -421,13 +457,15 @@ class DesignFlowSkillTests(unittest.TestCase):
         for required in ("Workflow", "complete_step", "DesignSelectCards", "AskUserQuestion", ".ohmyagent/design/", "implement-web", "implement-mobile"):
             self.assertIn(required, flow)
         for boundary in (
-            "explicitly expresses a primary intent",
-            "Do not infer design intent merely from visual or UI-related nouns",
-            "page, component, font, color, image, CSS, or asset",
-            "without making or evaluating visual appearance, layout, typography, or interaction decisions",
-            "asset engineering such as embedding, bundling, self-hosting, subsetting, loading, or replacing fonts",
-            "unless the user explicitly asks to change or evaluate their visual result",
-            "When design intent is ambiguous rather than explicit",
+            "user-facing feature work adds or changes visible controls, layout, interaction, or states",
+            "A language switcher, filter, form field, or permission entry point",
+            "backend-only localization, routing, permissions, or data wiring",
+            "Template catalogs, generated design directions, and selection cards are allowed only",
+            "explicitly asks to design a new page or screen",
+            "explicitly asks to redesign an existing page or screen",
+            "Feature additions, bounded refinements, and small interaction changes",
+            "recommendation-free enhancement branch",
+            "Do not infer recommendation intent",
             "debugging, diagnosis, code review",
             "behavior-preserving fixes",
             "screenshot or image attached as evidence",
