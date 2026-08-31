@@ -409,6 +409,14 @@ class DesignFlowSkillTests(unittest.TestCase):
         self.assertLessEqual(len(flow.splitlines()), 40)
         for required in ("Workflow", "complete_step", "DesignSelectCards", "AskUserQuestion", ".ohmyagent/design/", "implement-web", "implement-mobile"):
             self.assertIn(required, flow)
+        for boundary in (
+            "primary intent",
+            "debugging, diagnosis, code review",
+            "behavior-preserving fixes",
+            "screenshot or image attached as evidence",
+            "image preview, upload, or display",
+        ):
+            self.assertIn(boundary, flow)
         self.assertNotIn("exactly three materially relevant candidates", flow)
 
     def test_image_generation_contract(self) -> None:

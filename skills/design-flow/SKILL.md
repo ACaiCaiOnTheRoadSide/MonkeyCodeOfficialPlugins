@@ -1,11 +1,13 @@
 ---
 name: design-flow
-description: Mandatory entry point before creating or modifying any web/mobile front-end; also handles standalone image work.
+description: Use for explicit web/mobile visual or interaction design work and standalone image creation, editing, or visual evaluation; excludes diagnosis and behavior-preserving fixes.
 ---
 
 # Design Flow
 
-Use this Skill as the mandatory entry point before any web/mobile front-end implementation, including changes to an existing interface. Use it for standalone image work as well.
+Use this Skill only when the user's primary intent is to create, redesign, optimize, or evaluate the visual or interaction design of a web/mobile interface, or to create, edit, or visually evaluate standalone image content.
+
+Do not use it for debugging, diagnosis, code review, API/auth/network/data/state/performance issues, or behavior-preserving fixes. A screenshot or image attached as evidence does not make a task a design task, including bugs involving image preview, upload, or display.
 
 After activation:
 
