@@ -848,22 +848,150 @@
     },
     {
       "id": "existing-web",
-      "description": "Refine or redesign an existing Web interface",
+      "description": "Enhance, refine, restyle, or redesign an existing Web interface",
       "steps": [
         {
           "id": "existing-assessment",
           "description": "Assess existing interface",
-          "skills": [
-            "design-refinement"
-          ],
-          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the implementation and rendered interface. Treat an explicit user instruction not to use, recommend, browse, or show templates as binding. In that case, do not inspect image-generation capability and do not invoke template catalogs, template artifacts, or selection-card tools; record the template-free constraint in the assessment and complete this step with outcome template-free so the workflow continues directly at direct-thesis. Otherwise record the assessment and classify the requested change by explicit scope: outcome refine for bounded visual or interaction improvements that preserve the established visual language; outcome restyle for a new visual thesis without requiring multiple generated directions; outcome redesign only for an explicit broad redesign or exploration request. Do not escalate refine or restyle to image generation merely because the request mentions a page, component, CSS, font, color, image, screenshot, or asset. Preserve outcome template-free when the user explicitly opts out of templates.",
+          "skills": [],
+          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the implementation, rendered interface, established patterns, components, tokens, and relevant design guidance. Treat an explicit user instruction not to use, recommend, browse, or show templates or generated directions as binding. In that case, do not inspect image-generation capability and do not invoke template catalogs, template artifacts, or selection-card tools; record the template-free constraint and complete with outcome template-free so the workflow continues directly to direct-thesis. Otherwise classify proportionally from explicit user intent and actual interface impact: outcome micro for copy, icon, spacing, or equivalent local adjustments that introduce no new controls, interaction states, responsive behavior, or layout structure; outcome enhancement for bounded product feature additions such as a language switcher, filter, form field, permission entry point, or other new control, interaction, layout behavior, or state; outcome refine when the user asks for a bounded design/prototype refinement that preserves the established visual language; outcome restyle for a new visual thesis without multiple generated directions; and outcome redesign only for an explicit broad redesign or exploration request. Never infer redesign merely because the request mentions a page, component, UI, style, CSS, font, color, image, screenshot, or asset. The micro, enhancement, refine, and restyle outcomes must skip image capability, template catalogs, generated-direction selection, and recommendation cards.",
           "write_policy": "design-artifacts",
           "transitions": {
             "manual": {
+              "micro": "micro-constraints",
+              "enhancement": "enhancement-constraints",
               "refine": "visual-foundations",
               "restyle": "direct-thesis",
               "redesign": "image-capability",
               "template-free": "direct-thesis"
+            }
+          }
+        },
+        {
+          "id": "micro-constraints",
+          "description": "Ground the micro change in existing patterns",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Confirm that the change is local and introduces no new control, interaction state, responsive behavior, or layout structure. Inspect the surrounding interface and record the smallest applicable design constraints and focused acceptance checks; preserve established patterns and reuse components or tokens where they apply, without requiring the original code to already use them. Do not call image-generation, template, selection-card, recommendation, screenshot-scoring, or jury tools; do not create a standalone design direction or prototype. Complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "micro-platform"
+            }
+          }
+        },
+        {
+          "id": "micro-platform",
+          "description": "Implement the micro interface change",
+          "skills": [
+            "frontend-design",
+            "web-component-design"
+          ],
+          "instructions": "Reuse exactly the RUN_DIRECTORY and constraints recorded by micro-constraints. Implement the local change directly in the Web product, preserving established patterns, reusing components or tokens where applicable, and preserving unrelated behavior and public contracts. Do not broaden the visual scope. Complete with outcome completed after recording the changed product files.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "micro-verification"
+            }
+          }
+        },
+        {
+          "id": "micro-verification",
+          "description": "Run focused checks for the micro change",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Run only the focused repository tests, lint, typecheck, or build checks relevant to the changed files. Verify affected semantics, focus, overflow, and states only when the local change can influence them. Do not require screenshots, multi-viewport matrices, jury review, or percentage scoring. Fix regressions caused by the change, record actual results, and complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "completed"
+            }
+          }
+        },
+        {
+          "id": "enhancement-constraints",
+          "description": "Ground the feature in the existing design system",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Treat the current rendered interface, repository design guidance, tokens, and established components as the visual authority. Define the smallest coherent implementation, interaction states, responsive behavior, accessibility requirements, and acceptance evidence. Do not call image-generation, template, template-artifact, selection-card, recommendation, screenshot-scoring, or jury tools; do not create a standalone design direction or prototype. Record the constraints and complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-platform"
+            }
+          }
+        },
+        {
+          "id": "enhancement-platform",
+          "description": "Implement the bounded interface enhancement",
+          "skills": [
+            "frontend-design",
+            "web-component-design"
+          ],
+          "instructions": "Reuse exactly the RUN_DIRECTORY and constraints recorded by the preceding enhancement steps. Implement the requested feature directly in the Web product, reusing established components and tokens where applicable and preserving unrelated behavior and public contracts. Cover the required interaction and state behavior without broad visual restyling. Run focused checks, record changed product files and results, and complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-build-verification"
+            }
+          }
+        },
+        {
+          "id": "enhancement-build-verification",
+          "description": "Verify the enhanced product build",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Run the repository build, test, lint, and typecheck paths relevant to the changed product files. Fix failures caused by the enhancement and rerun the affected checks before completing. Record only actual results and complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-quality-gate"
+            }
+          }
+        },
+        {
+          "id": "enhancement-quality-gate",
+          "description": "Check rendered enhancement hard blockers",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Run the real product and capture fresh rendered evidence for two or three representative frames at 100% zoom: the primary changed viewport, a narrow/mobile viewport, and one additional breakpoint only when the affected layout needs it, including viewport or device metadata. Audit only the changed surface for hard blockers against the pre-existing interface, repository design system, and constraints recorded by enhancement-constraints. Treat clipped, overlapping, unreachable, missing, or inaccessible required content or interaction, horizontal overflow, broken reflow, and unusable focus or touch paths as blockers. Do not run the five-role jury, a full zoom matrix, category scoring, or a percentage scorecard. Evidence must include the representative screenshot paths, frame metadata, blockers checked, and the audit result. Complete with outcome passed only when no blocker remains; complete with outcome revise to return to implementation. After three failed audits, complete with outcome failed and report remaining blockers rather than claiming success.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "passed": "enhancement-accessibility-verification",
+              "revise": "enhancement-platform",
+              "failed": "cancelled"
+            }
+          }
+        },
+        {
+          "id": "enhancement-accessibility-verification",
+          "description": "Verify enhancement accessibility",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Verify the changed interface's keyboard and focus behavior, semantics, labels, contrast, reduced motion, and platform accessibility. Fix enhancement regressions before completing with outcome completed and record actual evidence.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-responsive-verification"
+            }
+          }
+        },
+        {
+          "id": "enhancement-responsive-verification",
+          "description": "Verify enhancement responsiveness",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Verify the changed interface at representative viewport or device sizes, including overflow, reflow, orientation where applicable, long localized copy, and touch targets. Fix enhancement regressions before completing with outcome completed and record actual evidence.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-states-verification"
+            }
+          }
+        },
+        {
+          "id": "enhancement-states-verification",
+          "description": "Verify enhancement interaction states",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Verify every relevant default, hover, focus, active, selected, disabled, loading, empty, error, success, persistence, and edge state introduced or affected by the enhancement. Fix regressions before completing with outcome completed and record actual evidence.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "completed"
             }
           }
         },
@@ -1258,22 +1386,148 @@
     },
     {
       "id": "existing-mobile",
-      "description": "Refine or redesign an existing mobile interface",
+      "description": "Enhance, refine, restyle, or redesign an existing mobile interface",
       "steps": [
         {
           "id": "existing-assessment",
           "description": "Assess existing interface",
-          "skills": [
-            "design-refinement"
-          ],
-          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the implementation and rendered interface. Treat an explicit user instruction not to use, recommend, browse, or show templates as binding. In that case, do not inspect image-generation capability and do not invoke template catalogs, template artifacts, or selection-card tools; record the template-free constraint in the assessment and complete this step with outcome template-free so the workflow continues directly at direct-thesis. Otherwise record the assessment and classify the requested change by explicit scope: outcome refine for bounded visual or interaction improvements that preserve the established visual language; outcome restyle for a new visual thesis without requiring multiple generated directions; outcome redesign only for an explicit broad redesign or exploration request. Do not escalate refine or restyle to image generation merely because the request mentions a page, component, CSS, font, color, image, screenshot, or asset. Preserve outcome template-free when the user explicitly opts out of templates.",
+          "skills": [],
+          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the implementation, rendered interface, established patterns, components, tokens, and relevant design guidance. Treat an explicit user instruction not to use, recommend, browse, or show templates or generated directions as binding. In that case, do not inspect image-generation capability and do not invoke template catalogs, template artifacts, or selection-card tools; record the template-free constraint and complete with outcome template-free so the workflow continues directly to direct-thesis. Otherwise classify proportionally from explicit user intent and actual interface impact: outcome micro for copy, icon, spacing, or equivalent local adjustments that introduce no new controls, interaction states, responsive behavior, or layout structure; outcome enhancement for bounded product feature additions such as a language switcher, filter, form field, permission entry point, or other new control, interaction, layout behavior, or state; outcome refine when the user asks for a bounded design/prototype refinement that preserves the established visual language; outcome restyle for a new visual thesis without multiple generated directions; and outcome redesign only for an explicit broad redesign or exploration request. Never infer redesign merely because the request mentions a page, component, UI, style, CSS, font, color, image, screenshot, or asset. The micro, enhancement, refine, and restyle outcomes must skip image capability, template catalogs, generated-direction selection, and recommendation cards.",
           "write_policy": "design-artifacts",
           "transitions": {
             "manual": {
+              "micro": "micro-constraints",
+              "enhancement": "enhancement-constraints",
               "refine": "visual-foundations",
               "restyle": "direct-thesis",
               "redesign": "image-capability",
               "template-free": "direct-thesis"
+            }
+          }
+        },
+        {
+          "id": "micro-constraints",
+          "description": "Ground the micro change in existing patterns",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Confirm that the change is local and introduces no new control, interaction state, responsive behavior, or layout structure. Inspect the surrounding interface and record the smallest applicable design constraints and focused acceptance checks; preserve established patterns and reuse components or tokens where they apply, without requiring the original code to already use them. Do not call image-generation, template, selection-card, recommendation, screenshot-scoring, or jury tools; do not create a standalone design direction or prototype. Complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "micro-platform"
+            }
+          }
+        },
+        {
+          "id": "micro-platform",
+          "description": "Implement the micro interface change",
+          "skills": [
+            "react-native-design"
+          ],
+          "instructions": "Reuse exactly the RUN_DIRECTORY and constraints recorded by micro-constraints. Implement the local change directly in the React Native/mobile product, preserving established patterns, reusing components or tokens where applicable, and preserving unrelated behavior and public contracts. Do not broaden the visual scope. Complete with outcome completed after recording the changed product files.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "micro-verification"
+            }
+          }
+        },
+        {
+          "id": "micro-verification",
+          "description": "Run focused checks for the micro change",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Run only the focused repository tests, lint, typecheck, or build checks relevant to the changed files. Verify affected semantics, focus, overflow, and states only when the local change can influence them. Do not require screenshots, multi-viewport matrices, jury review, or percentage scoring. Fix regressions caused by the change, record actual results, and complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "completed"
+            }
+          }
+        },
+        {
+          "id": "enhancement-constraints",
+          "description": "Ground the feature in the existing design system",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Treat the current rendered interface, repository design guidance, tokens, and established components as the visual authority. Define the smallest coherent implementation, interaction states, responsive behavior, accessibility requirements, and acceptance evidence. Do not call image-generation, template, template-artifact, selection-card, recommendation, screenshot-scoring, or jury tools; do not create a standalone design direction or prototype. Record the constraints and complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-platform"
+            }
+          }
+        },
+        {
+          "id": "enhancement-platform",
+          "description": "Implement the bounded interface enhancement",
+          "skills": [
+            "react-native-design"
+          ],
+          "instructions": "Reuse exactly the RUN_DIRECTORY and constraints recorded by the preceding enhancement steps. Implement the requested feature directly in the React Native/mobile product, reusing established components and tokens where applicable and preserving unrelated behavior and public contracts. Cover the required interaction and state behavior without broad visual restyling. Run focused checks, record changed product files and results, and complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-build-verification"
+            }
+          }
+        },
+        {
+          "id": "enhancement-build-verification",
+          "description": "Verify the enhanced product build",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Run the repository build, test, lint, and typecheck paths relevant to the changed product files. Fix failures caused by the enhancement and rerun the affected checks before completing. Record only actual results and complete with outcome completed.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-quality-gate"
+            }
+          }
+        },
+        {
+          "id": "enhancement-quality-gate",
+          "description": "Check rendered enhancement hard blockers",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Run the real product and capture fresh rendered evidence for two or three representative device frames: the primary target, a narrow device, and a wide device only when the affected layout needs it, including viewport or device metadata. Audit only the changed surface for hard blockers against the pre-existing interface, repository design system, and constraints recorded by enhancement-constraints. Treat clipped, overlapping, unreachable, missing, or inaccessible required content or interaction, horizontal overflow, broken reflow, and unusable focus or touch paths as blockers. Do not run the five-role jury, a full zoom matrix, category scoring, or a percentage scorecard. Evidence must include the representative screenshot paths, frame metadata, blockers checked, and the audit result. Complete with outcome passed only when no blocker remains; complete with outcome revise to return to implementation. After three failed audits, complete with outcome failed and report remaining blockers rather than claiming success.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "passed": "enhancement-accessibility-verification",
+              "revise": "enhancement-platform",
+              "failed": "cancelled"
+            }
+          }
+        },
+        {
+          "id": "enhancement-accessibility-verification",
+          "description": "Verify enhancement accessibility",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Verify the changed interface's keyboard and focus behavior, semantics, labels, contrast, reduced motion, and platform accessibility. Fix enhancement regressions before completing with outcome completed and record actual evidence.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-responsive-verification"
+            }
+          }
+        },
+        {
+          "id": "enhancement-responsive-verification",
+          "description": "Verify enhancement responsiveness",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Verify the changed interface at representative viewport or device sizes, including overflow, reflow, orientation where applicable, long localized copy, and touch targets. Fix enhancement regressions before completing with outcome completed and record actual evidence.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "enhancement-states-verification"
+            }
+          }
+        },
+        {
+          "id": "enhancement-states-verification",
+          "description": "Verify enhancement interaction states",
+          "skills": [],
+          "instructions": "Reuse exactly the RUN_DIRECTORY recorded by existing-assessment. Verify every relevant default, hover, focus, active, selected, disabled, loading, empty, error, success, persistence, and edge state introduced or affected by the enhancement. Fix regressions before completing with outcome completed and record actual evidence.",
+          "write_policy": "product",
+          "transitions": {
+            "manual": {
+              "completed": "completed"
             }
           }
         },

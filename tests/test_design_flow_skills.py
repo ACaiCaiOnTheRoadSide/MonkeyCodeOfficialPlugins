@@ -115,14 +115,52 @@ class DesignFlowSkillTests(unittest.TestCase):
                 self.assertEqual(
                     steps[entry_step]["transitions"]["manual"],
                     {
+                        "micro": "micro-constraints",
+                        "enhancement": "enhancement-constraints",
                         "refine": "visual-foundations",
                         "restyle": "direct-thesis",
                         "redesign": "image-capability",
                         "template-free": "direct-thesis",
                     },
                 )
-                for required in ("outcome refine", "outcome restyle", "outcome redesign", "Do not escalate refine or restyle"):
-                    self.assertIn(required, steps[entry_step]["instructions"])
+                assessment = steps[entry_step]
+                self.assertEqual(assessment["skills"], [])
+                self.assertEqual(assessment["write_policy"], "design-artifacts")
+                for required in (
+                    "outcome micro",
+                    "outcome enhancement",
+                    "outcome refine",
+                    "outcome restyle",
+                    "outcome redesign",
+                    "Never infer redesign merely",
+                    "micro, enhancement, refine, and restyle outcomes must skip",
+                ):
+                    self.assertIn(required, assessment["instructions"])
+
+                expected_micro = {"micro-constraints", "micro-platform", "micro-verification"}
+                expected_enhancement = {
+                    "enhancement-constraints",
+                    "enhancement-platform",
+                    "enhancement-build-verification",
+                    "enhancement-quality-gate",
+                    "enhancement-accessibility-verification",
+                    "enhancement-responsive-verification",
+                    "enhancement-states-verification",
+                }
+                self.assertTrue(expected_micro | expected_enhancement <= set(steps))
+                for step_id in expected_micro | expected_enhancement:
+                    self.assertEqual(steps[step_id]["write_policy"], "product")
+                    self.assertNotIn("design-refinement", steps[step_id]["skills"])
+                    lowered = steps[step_id]["instructions"].lower()
+                    if step_id.endswith("constraints"):
+                        for forbidden in ("image-generation", "template", "selection-card", "recommendation"):
+                            self.assertIn(forbidden, lowered)
+                self.assertIn("without requiring the original code to already use them", steps["micro-constraints"]["instructions"])
+                self.assertIn("Do not require screenshots", steps["micro-verification"]["instructions"])
+                quality = steps["enhancement-quality-gate"]["instructions"]
+                for required in ("representative", "hard blocker", "Do not run the five-role jury", "percentage scorecard"):
+                    self.assertIn(required, quality)
+                self.assertNotIn("design-refinement", assessment["skills"])
             else:
                 self.assertEqual(
                     steps[entry_step]["transitions"]["manual"],
@@ -329,8 +367,11 @@ class DesignFlowSkillTests(unittest.TestCase):
                 self.assertIn(required, quality_gate["instructions"])
             self.assertIn("continue to design-jury", quality_gate["instructions"])
             self.assertIn("ask to develop the product", jury["instructions"])
-            for step in steps.values():
-                self.assertIn(step["write_policy"], {"design-artifacts", "design-images"})
+            for step_id, step in steps.items():
+                if route_id.startswith("existing-") and step_id.startswith(("micro-", "enhancement-")):
+                    self.assertEqual(step["write_policy"], "product")
+                else:
+                    self.assertIn(step["write_policy"], {"design-artifacts", "design-images"})
             self.assertTrue(
                 {"html-approval", "implementation", "screenshot-comparison", "refinement-checkpoint",
                  "build-verification", "accessibility-verification", "responsive-verification",
@@ -458,17 +499,28 @@ class DesignFlowSkillTests(unittest.TestCase):
         for required in ("Workflow", "complete_step", "DesignSelectCards", "AskUserQuestion", ".ohmyagent/design/", "implement-web", "implement-mobile"):
             self.assertIn(required, flow)
         for boundary in (
-            "explicitly expresses a primary intent",
-            "Do not infer design intent merely from visual or UI-related nouns",
+            "user-facing feature work adds or changes visible controls, layout, interaction, or states",
+            "language switcher, filter, form field, or permission entry point",
+            "backend-only localization, routing, permissions, or data wiring",
+            "Do not infer design work merely from nouns",
             "page, component, font, color, image, CSS, or asset",
-            "without making or evaluating visual appearance, layout, typography, or interaction decisions",
             "asset engineering such as embedding, bundling, self-hosting, subsetting, loading, or replacing fonts",
-            "unless the user explicitly asks to change or evaluate their visual result",
-            "When design intent is ambiguous rather than explicit",
+            "unless the user explicitly asks to change or evaluate the visual result",
+            "Template catalogs, generated design directions, and selection cards are allowed only",
+            "explicit new page or screen design",
+            "explicit broad redesign",
+            "copy, icon, spacing",
+            "take `micro`",
+            "take `enhancement`",
+            "take `refine`",
+            "takes `restyle`",
+            "None of these four outcomes enters recommendation stages",
             "debugging, diagnosis, code review",
             "behavior-preserving fixes",
             "screenshot or image attached as evidence",
             "image preview, upload, or display",
+            "without screenshots or scoring",
+            "without a percentage scorecard",
         ):
             self.assertIn(boundary, flow)
         self.assertNotIn("exactly three materially relevant candidates", flow)
