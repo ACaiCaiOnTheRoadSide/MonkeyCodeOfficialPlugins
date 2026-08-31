@@ -1,11 +1,13 @@
 ---
 name: design-flow
-description: Use for explicit web/mobile visual or interaction design work and standalone image creation, editing, or visual evaluation; excludes diagnosis and behavior-preserving fixes.
+description: Use only when the user explicitly asks for web/mobile visual or interaction design work or standalone image creation, editing, or visual evaluation; do not infer design intent from UI-related nouns or asset engineering.
 ---
 
 # Design Flow
 
-Use this Skill only when the user's primary intent is to create, redesign, optimize, or evaluate the visual or interaction design of a web/mobile interface, or to create, edit, or visually evaluate standalone image content.
+Use this Skill only when the user explicitly expresses a primary intent to create, redesign, optimize, or evaluate the visual or interaction design of a web/mobile interface, or to create, edit, or visually evaluate standalone image content.
+
+Do not infer design intent merely from visual or UI-related nouns such as page, component, font, color, image, CSS, or asset. If the request can be completed without making or evaluating visual appearance, layout, typography, or interaction decisions, do not use this Skill. This excludes asset engineering such as embedding, bundling, self-hosting, subsetting, loading, or replacing fonts, images, or other assets unless the user explicitly asks to change or evaluate their visual result. When design intent is ambiguous rather than explicit, do not use this Skill.
 
 Do not use it for debugging, diagnosis, code review, API/auth/network/data/state/performance issues, or behavior-preserving fixes. A screenshot or image attached as evidence does not make a task a design task, including bugs involving image preview, upload, or display.
 

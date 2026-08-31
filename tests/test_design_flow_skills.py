@@ -421,7 +421,13 @@ class DesignFlowSkillTests(unittest.TestCase):
         for required in ("Workflow", "complete_step", "DesignSelectCards", "AskUserQuestion", ".ohmyagent/design/", "implement-web", "implement-mobile"):
             self.assertIn(required, flow)
         for boundary in (
-            "primary intent",
+            "explicitly expresses a primary intent",
+            "Do not infer design intent merely from visual or UI-related nouns",
+            "page, component, font, color, image, CSS, or asset",
+            "without making or evaluating visual appearance, layout, typography, or interaction decisions",
+            "asset engineering such as embedding, bundling, self-hosting, subsetting, loading, or replacing fonts",
+            "unless the user explicitly asks to change or evaluate their visual result",
+            "When design intent is ambiguous rather than explicit",
             "debugging, diagnosis, code review",
             "behavior-preserving fixes",
             "screenshot or image attached as evidence",
