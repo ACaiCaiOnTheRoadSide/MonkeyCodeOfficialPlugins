@@ -16,11 +16,12 @@
           "skills": [
             "design-generation"
           ],
-          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the repository and resolve only material ambiguity. Record the brief as evidence.",
+          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the repository and resolve only material ambiguity. Treat an explicit user instruction not to use, recommend, browse, or show templates as binding. In that case, do not inspect image-generation capability and do not invoke template catalogs, template artifacts, or selection-card tools; record the template-free constraint in the brief and complete this step with outcome template-free so the workflow continues directly at direct-thesis. Otherwise record the brief and complete this step with outcome completed.",
           "write_policy": "product",
           "transitions": {
             "manual": {
-              "completed": "image-capability"
+              "completed": "image-capability",
+              "template-free": "direct-thesis"
             }
           }
         },
@@ -411,11 +412,12 @@
           "skills": [
             "design-generation"
           ],
-          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the repository and resolve only material ambiguity. Record the brief as evidence.",
+          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the repository and resolve only material ambiguity. Treat an explicit user instruction not to use, recommend, browse, or show templates as binding. In that case, do not inspect image-generation capability and do not invoke template catalogs, template artifacts, or selection-card tools; record the template-free constraint in the brief and complete this step with outcome template-free so the workflow continues directly at direct-thesis. Otherwise record the brief and complete this step with outcome completed.",
           "write_policy": "product",
           "transitions": {
             "manual": {
-              "completed": "image-capability"
+              "completed": "image-capability",
+              "template-free": "direct-thesis"
             }
           }
         },
@@ -805,11 +807,12 @@
           "skills": [
             "design-refinement"
           ],
-          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the implementation and rendered interface, then record the assessment as evidence.",
+          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the implementation and rendered interface. Treat an explicit user instruction not to use, recommend, browse, or show templates as binding. In that case, do not inspect image-generation capability and do not invoke template catalogs, template artifacts, or selection-card tools; record the template-free constraint in the assessment and complete this step with outcome template-free so the workflow continues directly at direct-thesis. Otherwise record the assessment and complete this step with outcome completed.",
           "write_policy": "product",
           "transitions": {
             "manual": {
-              "completed": "image-capability"
+              "completed": "image-capability",
+              "template-free": "direct-thesis"
             }
           }
         },
@@ -1200,11 +1203,12 @@
           "skills": [
             "design-refinement"
           ],
-          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the implementation and rendered interface, then record the assessment as evidence.",
+          "instructions": "Before any other work, allocate this workflow run's immutable run directory. Inspect only direct child directories of .ohmyagent/design whose complete name matches ^v([1-9]\\d*)$; ignore files, nested directories, v0, leading-zero names, and every other name. Set N to one more than the largest captured decimal number, or 1 when there are no matches, and create exactly .ohmyagent/design/vN with a create-new operation that fails if it already exists. Never overwrite, reuse, delete, or merge an existing version directory; if creation races or the target exists, rescan and allocate a newer number. Record the exact path as RUN_DIRECTORY in this step's evidence so every later step in this route reuses it without rescanning or reallocating. Inspect the implementation and rendered interface. Treat an explicit user instruction not to use, recommend, browse, or show templates as binding. In that case, do not inspect image-generation capability and do not invoke template catalogs, template artifacts, or selection-card tools; record the template-free constraint in the assessment and complete this step with outcome template-free so the workflow continues directly at direct-thesis. Otherwise record the assessment and complete this step with outcome completed.",
           "write_policy": "product",
           "transitions": {
             "manual": {
-              "completed": "image-capability"
+              "completed": "image-capability",
+              "template-free": "direct-thesis"
             }
           }
         },

@@ -78,6 +78,9 @@ class DesignFlowSkillTests(unittest.TestCase):
                 self.assertTrue(all(target in ids | {"completed", "cancelled"} for target in targets))
                 if transitions.get("tools") and not transitions.get("manual"):
                     self.assertIn("unavailable_target", step)
+        root_skill = skill_text("design-flow")
+        self.assertIn("explicit user instruction not to use, recommend, browse, or show templates is binding", root_skill)
+        self.assertIn("take the `template-free` transition directly to `direct-thesis`", root_skill)
         web_steps = {step["id"]: step for step in routes["new-web"]["steps"]}
         self.assertNotIn("visual-source", web_steps)
         self.assertEqual(web_steps["platform"]["skills"], ["frontend-design", "web-component-design"])
@@ -92,7 +95,10 @@ class DesignFlowSkillTests(unittest.TestCase):
         }
         for route_id, entry_step in entry_steps.items():
             steps = {step["id"]: step for step in routes[route_id]["steps"]}
-            self.assertEqual(steps[entry_step]["transitions"]["manual"], {"completed": "image-capability"})
+            self.assertEqual(
+                steps[entry_step]["transitions"]["manual"],
+                {"completed": "image-capability", "template-free": "direct-thesis"},
+            )
             allocation = steps[entry_step]["instructions"]
             for required in (
                 "only direct child directories",
@@ -101,6 +107,11 @@ class DesignFlowSkillTests(unittest.TestCase):
                 "create-new operation that fails",
                 "Never overwrite, reuse",
                 "RUN_DIRECTORY",
+                "explicit user instruction not to use, recommend, browse, or show templates",
+                "do not inspect image-generation capability",
+                "do not invoke template catalogs, template artifacts, or selection-card tools",
+                "outcome template-free",
+                "direct-thesis",
             ):
                 self.assertIn(required, allocation)
             for step_id, step in steps.items():
