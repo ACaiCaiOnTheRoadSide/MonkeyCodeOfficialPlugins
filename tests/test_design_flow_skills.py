@@ -97,6 +97,9 @@ class DesignFlowSkillTests(unittest.TestCase):
         root_skill = skill_text("design-flow")
         self.assertIn("explicit user instruction not to use, recommend, browse, or show templates is binding", root_skill)
         self.assertIn("take the `template-free` transition directly to `direct-thesis`", root_skill)
+        self.assertIn("never pause merely to ask the user to reply", root_skill)
+        self.assertIn("A matching non-empty static prototype is sufficient implementation authority", root_skill)
+        self.assertIn("without asking for a second confirmation", root_skill)
         web_steps = {step["id"]: step for step in routes["new-web"]["steps"]}
         self.assertNotIn("visual-source", web_steps)
         self.assertEqual(web_steps["platform"]["skills"], ["frontend-design", "web-component-design"])
@@ -366,6 +369,8 @@ class DesignFlowSkillTests(unittest.TestCase):
             ):
                 self.assertIn(required, quality_gate["instructions"])
             self.assertIn("continue to design-jury", quality_gate["instructions"])
+            self.assertIn("current request already includes product implementation", jury["instructions"])
+            self.assertIn("without asking for another acknowledgement", jury["instructions"])
             self.assertIn("ask to develop the product", jury["instructions"])
             for step_id, step in steps.items():
                 if route_id.startswith("existing-") and step_id.startswith(("micro-", "enhancement-")):
@@ -396,6 +401,9 @@ class DesignFlowSkillTests(unittest.TestCase):
                 "RUN_DIRECTORY/prototype.html",
                 "complete with outcome missing",
                 "never fall back",
+                "static prototype is sufficient implementation authority",
+                "do not return missing",
+                "ask for another acknowledgement",
             ):
                 self.assertIn(required, resolution)
             for step_id, step in steps.items():
